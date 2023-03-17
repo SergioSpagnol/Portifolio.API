@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Portifolio.API;
 
@@ -24,9 +26,21 @@ app.UseCors(p => p
 app.MapPost("/Contacts", async (PortifolioContext context, Contact contact) =>
 {
     contact.Date = DateTime.Now;
+    try
+    {
+        throw new NotImplementedException();
+        await context.Contatos.AddAsync(contact);
+        await context.SaveChangesAsync();
 
-    await context.Contatos.AddAsync(contact);
-    await context.SaveChangesAsync();
+    }
+    catch (NotImplementedException sqlex)
+    {
+        return Results.BadRequest("Ocorreu um erro ao salvar o contato!");
+    }
+    catch (Exception ex)
+    {
+        return Results.BadRequest("Ocorreu um erro ao salvar o contato!");
+    }
 
     return Results.Ok(contact);
 })
